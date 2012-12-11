@@ -99,7 +99,7 @@ qplot(ValidTime, `TotalPrecip___`, data = subset(weather.data, FormattedTime >= 
     geom_point(colour = I("black")) +
     geom_smooth(linetype = 3, alpha = .15)
 
-maxmin.sub <- ddply(weather.data, .(Day = factor(day(ValidTime), ordered = TRUE)), summarise, MinTemp = min(MaxTemp__F), MaxTemp = max(MaxTemp__F))
+maxmin.sub <- ddply(weather.data, .(Day = day(ValidTime)), summarise, MinTemp = min(MaxTemp__F), MaxTemp = max(MaxTemp__F))
 qplot(Day, MinTemp, data = maxmin.sub, geom = "line") + 
     geom_line(aes(Day, MaxTemp)) +
     geom_ribbon(aes(ymin = MinTemp, ymax = MaxTemp))
