@@ -28,9 +28,21 @@ forecast.time <- substring(strsplit(as.character(tbl[4]$'NULL'$V1[2]), "\n")[[1]
 forecast.time <- gsub("Z", ":00:00 UTC", forecast.time)
 
 valid.time <- unlist(strsplit(gsub("Z", ":00:00", weather.data$ValidTime), split = " "))
+
 ind1 <- (1:length(valid.time) %% 3 == 2)
 ind2 <- (1:length(valid.time) %% 3 == 0)
-valid.time <- paste(valid.time[ind1], "/", year(Sys.Date()), " ", valid.time[ind2], sep = "")
+    
+months <- unlist(strsplit(valid.time[ind1], split = "/"))
+ind3 <- (1:length(months) %% 2 == 1)
+months <- as.numeric(months[ind3])
+
+## Edge Case: First month 12, Last month 1
+yearList <- rep(year(Sys.Date()), times = length(months))
+if (months[1] == 12 & months[length(months)] == 1) {
+    yearList[which(months == 1)] <- year(Sys.Date()) + 1
+}
+    
+valid.time <- paste(valid.time[ind1], "/", yearList, " ", valid.time[ind2], sep = "")
 weather.data$ValidTime <- as.POSIXct(valid.time, format = "%m/%d/%Y %H:%M:%S")
 weather.data$`500-1000THKNS` <- as.numeric(as.character(weather.data$`500-1000THKNS`))
 weather.data$`TotalPrecip(")` <- as.numeric(as.character(weather.data$`TotalPrecip(")`))

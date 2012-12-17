@@ -16,7 +16,7 @@ getCurrentData <- function() {
     return(weather.data)
 }
 
-url <- "http://wxweb.meteostar.com/sample/archive.shtml?text=KSEA&run=2012121006"
+url <- "http://wxweb.meteostar.com/sample/archive.shtml?text=KSEA&run=2012121112"
 tbl <- readHTMLTable(url)
 
 curData <- getCurrentData()
@@ -47,7 +47,7 @@ for (i in c(2, 3, 4, 12, 13)) {
 ###
 ### TYPE MANUALLY
 ###
-forecast.time <- "12/10/2012 06:00:00 UTC"
+forecast.time <- "12/11/2012 12:00:00 UTC"
 
 valid.time <- unlist(strsplit(gsub("Z", ":00:00", weather.data$ValidTime), split = " "))
 ind1 <- (1:length(valid.time) %% 3 == 2)
