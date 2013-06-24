@@ -12,6 +12,6 @@ lapply(1:length(stations.list),
        function(i) {
            sta <- stations.list[i]
            cat(paste("Processing Station ", sta, " (", i, "/", length(stations.list), ")\n", sep = ""))
-           writeForecast(sta, conn = conn)
+           try(writeForecast(sta, conn = conn))
        })
     
