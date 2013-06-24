@@ -46,10 +46,10 @@ writeForecast <- function(station, conn) {
     writeToDB(tbl, conn)
 }
 
-readForecast <- function(station = "") {
+readForecast <- function(station = "", conn) {    
     dbTbl <- dbReadTable(conn, "forecast")
-    dbTbl$DAT <- as.POSIXct(dbTbl$DAT)
-    dbTbl$STA <- factor(dbTbl$STA)
+    #dbTbl$DAT <- as.POSIXct(dbTbl$DAT)
+    #dbTbl$STA <- factor(dbTbl$STA)
     
     if (station == "") station <- unique(dbTbl$STA)
     
