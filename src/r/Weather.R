@@ -11,7 +11,14 @@ getForecastTable <- function(station) {
     webpage <- readLines(tc <- textConnection(webpage)); close(tc)
     
     ## Choose only the relevant lines
-    forecast.text <- webpage[c(7, 9:13)]
+    date.text <- webpage[6]
+    forecast.text <- webpage[c(7, 9:13, 15, 17)]
+    
+    ## Parse the date
+    fixed.date <- strsplit(date.text, split = " ")[[1]]
+    fixed.date <- fixed.date[-which(fixed.date == "")]
+    forecast.date.temp <- paste(fixed.date[5:6], collapse = " ")
+    forecast.date <- as.POSIXct(strptime(forecast.date.temp, format = "%m/%d/%Y %H%M"))
     
     ## Strip out unwanted characters
     fixed <- strsplit(forecast.text, split = " |\\|")
@@ -24,5 +31,29 @@ getForecastTable <- function(station) {
     names(forecast.table) <- table.names
     forecast.table[,1:ncol(forecast.table)] <- sapply(forecast.table[,1:ncol(forecast.table)], function(x){as.numeric(as.character(x))})
     
-    return(forecast.table)
+    ## Add Date
+    final.table <- cbind(STA = station, DAT = rep(forecast.date, 15), forecast.table)
+    
+    return(final.table)
+}
+
+writeToDB <- function(tbl) {
+    conn <- dbConnect(MySQL(), user = "root", password = "toor", dbname = "forecast_analysis", host = "localhost")
+    dbWriteTable(conn, "forecast", tbl, row.names = FALSE, append = TRUE)
+}
+
+
+writeForecast <- function(station) {
+    tbl <- getForecastTable(station)
+    writeToDB(tbl)
+}
+
+readForecast <- function(station = "") {
+    dbTbl <- dbReadTable(conn, "forecast")
+    dbTbl$DAT <- as.POSIXct(dbTbl$DAT)
+    dbTbl$STA <- factor(dbTbl$STA)
+    
+    if (station == "") station <- unique(dbTbl$STA)
+    
+    return(subset(dbTbl, STA == station))
 }
