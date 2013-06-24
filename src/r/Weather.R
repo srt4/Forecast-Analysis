@@ -1,6 +1,5 @@
 library(XML)
 library(RMySQL)
-library(ggplot2)
 library(lubridate)
 library(plyr)
 library(RCurl)
@@ -37,15 +36,14 @@ getForecastTable <- function(station) {
     return(final.table)
 }
 
-writeToDB <- function(tbl) {
-    conn <- dbConnect(MySQL(), user = "root", password = "toor", dbname = "forecast_analysis", host = "localhost")
+writeToDB <- function(tbl, conn) {
     dbWriteTable(conn, "forecast", tbl, row.names = FALSE, append = TRUE)
 }
 
 
-writeForecast <- function(station) {
+writeForecast <- function(station, conn) {
     tbl <- getForecastTable(station)
-    writeToDB(tbl)
+    writeToDB(tbl, conn)
 }
 
 readForecast <- function(station = "") {
