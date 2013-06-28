@@ -58,5 +58,5 @@ readForecast <- function(station, conn) {
     #dbTbl$DAT <- as.POSIXct(dbTbl$DAT)
     #dbTbl$STA <- factor(dbTbl$STA)
     
-    return(subset(dbTbl, STA == station))
+    return(fetch(dbTbl))
 }
