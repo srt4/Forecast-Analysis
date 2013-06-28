@@ -53,12 +53,10 @@ writeForecast <- function(station, conn) {
     writeToDB(tbl, conn)
 }
 
-readForecast <- function(station = "", conn) {    
-    dbTbl <- dbReadTable(conn, "forecast")
+readForecast <- function(station, conn) {    
+    dbTbl <- dbSendQuery(conn, paste("SELECT * FROM forecast WHERE STA = '", station, "'", sep = ""))
     #dbTbl$DAT <- as.POSIXct(dbTbl$DAT)
     #dbTbl$STA <- factor(dbTbl$STA)
-    
-    if (station == "") station <- unique(dbTbl$STA)
     
     return(subset(dbTbl, STA == station))
 }
