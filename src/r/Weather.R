@@ -58,7 +58,11 @@ getStationName <- function(station, conn) {
     
     returnTable <- fetch(dbTbl)
     
-    return(returnTable[1,1])
+    if (is.null(returnTable[1,1])) {
+        return("Station Name Unknown")
+    } else {
+        return(returnTable[1,1])
+    }
 }
 
 readForecast <- function(station, conn) {    
