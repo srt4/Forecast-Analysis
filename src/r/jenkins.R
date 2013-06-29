@@ -6,8 +6,9 @@ source("Weather.R", chdir = TRUE)
 stations.list.temp <- read.csv("../../stations.csv")
 stations.list <- names(stations.list.temp)
 
-# DB Loop
+## DB Loop
 conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
+
 lapply(1:length(stations.list), 
        function(i) {
            sta <- stations.list[i]
