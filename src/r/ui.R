@@ -37,9 +37,9 @@ shinyUI(pageWithSidebar(
   # number of observations
   mainPanel(
       tabsetPanel(
-          tabPanel("Table", textOutput("stationText"), br(), tableOutput("view")),
-          tabPanel("Forecast", textOutput("stationText"), br(), plotOutput("forecastTemp")),
-          tabPanel("Accuracy", textOutput("stationText"), br(), plotOutput("accuracy")),
+          tabPanel("Table", tags$b(textOutput("stationText")), tableOutput("view")),
+          tabPanel("Forecast", tags$b(textOutput("station2Text")), br(), plotOutput("forecastTemp")),
+          tabPanel("Accuracy", tags$b(textOutput("station3Text")), br(), plotOutput("accuracy")),
           tabPanel("Extremes", tableOutput("extremes"), tableOutput("extremes_low"))
       )
   )

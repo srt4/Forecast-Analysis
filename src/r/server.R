@@ -17,11 +17,19 @@ shinyServer(function(input, output) {
         tbl <- forecastTable()
         tbl$DAT <- as.character(tbl$DAT)        
         
-        return(Name = station.names, tbl)
+        return(tbl[,-1])
     })
     
     output$stationText <- renderText({
-        return(paste("Displaying results for ", input$station, " (", getStationName(input$station, conn), ")" sep = ""))
+        return(paste("Displaying results for ", input$station, " (", getStationName(input$station, conn), ")", sep = ""))
+    })
+    
+    output$station2Text <- renderText({
+        return(paste("Displaying results for ", input$station, " (", getStationName(input$station, conn), ")", sep = ""))
+    })
+    
+    output$station3Text <- renderText({
+        return(paste("Displaying results for ", input$station, " (", getStationName(input$station, conn), ")", sep = ""))
     })
     
     output$forecastTemp <- renderPlot({
