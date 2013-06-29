@@ -53,10 +53,20 @@ writeForecast <- function(station, conn) {
     writeToDB(tbl, conn)
 }
 
+getStationName <- function(station, conn) {
+    dbTbl <- dbSendQuery(conn, paste("SELECT description FROM stations WHERE STA = '", station, "'", sep = ""))
+    
+    returnTable <- fetch(dbTbl)
+    
+    return(returnTable[1,1])
+}
+
 readForecast <- function(station, conn) {    
     dbTbl <- dbSendQuery(conn, paste("SELECT * FROM forecast WHERE STA = '", station, "'", sep = ""))
-    #dbTbl$DAT <- as.POSIXct(dbTbl$DAT)
-    #dbTbl$STA <- factor(dbTbl$STA)
     
-    return(fetch(dbTbl))
+    returnTable <- fetch(dbTbl)
+    returnTable$DAT <- as.POSIXct(returnTable$DAT)
+    returnTable$STA <- factor(returnTable$STA)
+    
+    return(returnTable)
 }
