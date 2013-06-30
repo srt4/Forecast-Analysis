@@ -1,5 +1,6 @@
 library(shiny)
 library(ggplot2)
+library(plyr)
 
 source("Weather.R")
 
@@ -63,7 +64,7 @@ shinyServer(function(input, output) {
         return(paste("Displaying ", input$forecast_date, " forecast stability for ", input$station, " (", getStationName(input$station, conn), ")", sep = ""))
     })
     
-    output$forecastTemp <- renderPlot({
+    output$forecastPlot <- renderPlot({
         tbl <- forecastTable()
                         
         tbl$VTM <- tbl$DAT + hours(tbl$FHR)
@@ -74,10 +75,22 @@ shinyServer(function(input, output) {
         
         tbl <- subset(tbl, VTM >= as.POSIXct(input$date_range[1]) & VTM <= as.POSIXct(input$date_range[2]))
         
-        thisPlot <- ggplot(tbl, aes_string(x = "VTM", y = input$measure, group = "DAT_fac", colour = "DAT_fac")) + 
-            geom_line() +
-            xlab("Valid Date for Forecast") +
-            ylab(getMeasureName(input$measure))
+        if (input$means) {
+            newData <- ddply(tbl, .(VTM), summarise, TMP = mean(TMP, na.rm = TRUE), DPT = mean(DPT, na.rm = TRUE), WND = mean(WND, na.rm = TRUE), P12 = mean(P12, na.rm = TRUE), Q12 = mean(Q12, na.rm = TRUE), T12 = mean(T12, na.rm = TRUE))
+            thisPlot <- ggplot(newData, aes_string(x = "VTM", y = input$measure)) + 
+                geom_line(size = 2) +
+                xlab("Valid Date for Forecast") +
+                ylab(paste("Average", getMeasureName(input$measure))) +
+                theme_bw() +
+                theme(legend.position = "off")
+        } else {
+            thisPlot <- ggplot(tbl, aes_string(x = "VTM", y = input$measure, group = "DAT_fac", colour = "DAT_fac")) + 
+                geom_line(size = 2) +
+                xlab("Valid Date for Forecast") +
+                ylab(getMeasureName(input$measure)) + 
+                theme_bw() +
+                theme(legend.position = "off")
+        }
         
         print(thisPlot)
     })
@@ -89,9 +102,10 @@ shinyServer(function(input, output) {
         validTbl <- subset(tbl, VTM == as.POSIXct(paste(input$forecast_date, input$forecast_hour)))
         
         thisPlot <- ggplot(validTbl, aes_string(x = "DAT", y = input$measure)) + 
-            geom_line() +
+            geom_line(size = 2) +
             xlab("Date of Forecast") +
-            ylab(getMeasureName(input$measure))
+            ylab(getMeasureName(input$measure)) +
+            theme_bw()
         
         print(thisPlot)
     })

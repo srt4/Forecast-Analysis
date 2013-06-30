@@ -40,7 +40,8 @@ shinyUI(pageWithSidebar(
         checkboxInput("advanced", "Show Advanced Configuration"),
         conditionalPanel(
             condition = "input.advanced == true",
-            selectInput("temperature", "Temperatures:", c("High", "Low", "Both"))
+            selectInput("temperature", "Temperatures:", c("High", "Low", "Both")),
+            checkboxInput("means", "Forecast Averages Only")
         )
     ),
     
@@ -48,7 +49,7 @@ shinyUI(pageWithSidebar(
     # number of observations
     mainPanel(
         tabsetPanel(
-            tabPanel("Forecast", tags$b(textOutput("stationForecastText")), br(), plotOutput("forecastTemp"), br(), tableOutput("viewForecast")),
+            tabPanel("Forecast", tags$b(textOutput("stationForecastText")), br(), plotOutput("forecastPlot"), br(), tableOutput("viewForecast")),
             tabPanel("Stability", tags$b(textOutput("stationStabilityText")), br(), plotOutput("stability"), br(), tableOutput("viewStability")),
             tabPanel("Extremes", tags$b(textOutput("extremesText")), br(), tableOutput("extremes"), tableOutput("extremes_low"))
         )
