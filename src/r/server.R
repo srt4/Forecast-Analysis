@@ -5,7 +5,6 @@ library(plyr)
 source("Weather.R")
 
 conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
-try(dbClearResult(dbListResults(conn)[[1]]))
 
 getMeasureName <- function(measure) {
     if (measure == "TMP") {

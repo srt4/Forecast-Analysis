@@ -66,8 +66,6 @@ getStationName <- function(station, conn) {
 }
 
 readForecast <- function(station, conn) {    
-#conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.u$
-try(dbClearResult(dbListResults(conn)[[1]]))
     dbTbl <- dbSendQuery(conn, paste("SELECT * FROM forecast WHERE DAT > '2013-07-13' AND STA = '", station, "'", sep = ""))
     
     returnTable <- fetch(dbTbl)
