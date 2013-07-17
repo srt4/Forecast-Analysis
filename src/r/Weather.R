@@ -66,7 +66,7 @@ getStationName <- function(station, conn) {
 }
 
 readForecast <- function(station, conn) {    
-    dbTbl <- dbSendQuery(conn, paste("SELECT * FROM forecast WHERE DAT > '2013-07-13' AND STA = '", station, "'", sep = ""))
+    dbTbl <- dbSendQuery(conn, paste("SELECT * FROM forecast WHERE STA = '", station, "'", sep = ""))
     
     returnTable <- fetch(dbTbl)
     returnTable$DAT <- as.POSIXct(returnTable$DAT)
