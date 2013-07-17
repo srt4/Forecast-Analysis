@@ -4,7 +4,7 @@ library(plyr)
 
 source("Weather.R")
 
-conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
+#conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
 
 getMeasureName <- function(measure) {
     if (measure == "TMP") {
@@ -29,7 +29,7 @@ shinyServer(function(input, output) {
     # Show the first "n" observations
     
     forecastTable <- reactive({
-        return(readForecast(input$station, conn))
+        return(readForecast(input$station, input$date_range[1], input$date_range[2]))
     })
     
     output$viewForecast <- renderTable({
@@ -57,11 +57,11 @@ shinyServer(function(input, output) {
     }, include.rownames = FALSE)
     
     output$stationForecastText <- renderText({
-        return(paste("Displaying ", input$date_range[1], " to ", input$date_range[2], " forecast for ", input$station, " (", getStationName(input$station, conn), ")", sep = ""))
+        return(paste("Displaying ", input$date_range[1], " to ", input$date_range[2], " forecast for ", input$station, " (", getStationName(input$station), ")", sep = ""))
     })
     
     output$stationStabilityText <- renderText({
-        return(paste("Displaying ", input$forecast_date, " forecast stability for ", input$station, " (", getStationName(input$station, conn), ")", sep = ""))
+        return(paste("Displaying ", input$forecast_date, " forecast stability for ", input$station, " (", getStationName(input$station), ")", sep = ""))
     })
     
     output$forecastPlot <- renderPlot({
@@ -118,20 +118,31 @@ shinyServer(function(input, output) {
     })
     
     output$extremes <- renderTable({
+
+conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
+
+
         dbTbl <- dbSendQuery(conn, paste("SELECT STA, AVG(", input$measure, ") FROM forecast WHERE DAT BETWEEN '", as.character(as.POSIXct(input$date_range[1]) - days(7)), "' AND '", input$date_range[1], "' AND  ", input$measure, " < 150 GROUP BY STA ORDER BY AVG(", input$measure, ") DESC LIMIT 10", sep = ""))
         tbl <- fetch(dbTbl)
         
-        station.names <- sapply(tbl$STA, getStationName, conn = conn)
+        station.names <- sapply(tbl$STA, getStationName)
+
+	dbDisconnect(conn)
         
         return(cbind(Name = station.names, tbl))
     }, include.rownames = FALSE)
     
     output$extremes_low <- renderTable({
-        dbTbl <- dbSendQuery(conn, paste("SELECT STA, AVG(", input$measure, ") FROM forecast WHERE DAT BETWEEN '", as.character(as.POSIXct(input$date_range[1]) - days(7)), "' AND '", input$date_range[2], "'  AND ", input$measure, " < 150 GROUP BY STA ORDER BY AVG(", input$measure, ") ASC LIMIT 10", sep = ""))
+        
+conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
+	
+	dbTbl <- dbSendQuery(conn, paste("SELECT STA, AVG(", input$measure, ") FROM forecast WHERE DAT BETWEEN '", as.character(as.POSIXct(input$date_range[1]) - days(7)), "' AND '", input$date_range[2], "'  AND ", input$measure, " < 150 GROUP BY STA ORDER BY AVG(", input$measure, ") ASC LIMIT 10", sep = ""))
         tbl <- fetch(dbTbl)
         
         station.names <- sapply(tbl$STA, getStationName, conn = conn)
         
+	dbDisconnect(conn)
+
         return(cbind(Name = station.names, tbl))
     }, include.rownames = FALSE)
 })
