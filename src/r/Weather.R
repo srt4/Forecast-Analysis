@@ -56,21 +56,36 @@ writeForecast <- function(station, conn = NULL) {
     }
     tbl <- getForecastTable(station)
     writeToDB(tbl, conn)
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 9bbead3fa6a5befe76de172c510e810894cb114e
     if (closeConn) {
         dbDisconnect(conn)
     }
 }
 
 getStationName <- function(station) {
+<<<<<<< HEAD
     
     conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
     dbTbl <- dbSendQuery(conn, paste("SELECT description FROM stations WHERE STA = '", station, "'", sep = ""))
+=======
+>>>>>>> 9bbead3fa6a5befe76de172c510e810894cb114e
     
-    returnTable <- fetch(dbTbl)
+conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
+	dbTbl <- dbSendQuery(conn, paste("SELECT description FROM stations WHERE STA = '", station, "'", sep = ""))
     
+<<<<<<< HEAD
     dbDisconnect(conn)    
     
+=======
+    returnTable <- fetch(dbTbl)
+
+    dbDisconnect(conn)    
+
+>>>>>>> 9bbead3fa6a5befe76de172c510e810894cb114e
     if (is.null(returnTable[1,1])) {
         return("Station Name Unknown")
     } else {
@@ -79,9 +94,15 @@ getStationName <- function(station) {
 }
 
 readForecast <- function(station, startdate, enddate) {    
+<<<<<<< HEAD
     
     conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
     
+=======
+
+conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
+
+>>>>>>> 9bbead3fa6a5befe76de172c510e810894cb114e
     dbTbl <- dbSendQuery(conn, paste("SELECT * FROM forecast WHERE DAT BETWEEN '", as.character(as.POSIXct(startdate) - days(10)), "' AND '", enddate, "' AND STA = '", station, "'", sep = ""))
     
     returnTable <- fetch(dbTbl)
@@ -89,6 +110,10 @@ readForecast <- function(station, startdate, enddate) {
     returnTable$STA <- factor(returnTable$STA)
     
     dbDisconnect(conn)
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 9bbead3fa6a5befe76de172c510e810894cb114e
     return(returnTable)
 }
