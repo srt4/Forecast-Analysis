@@ -56,7 +56,7 @@ writeForecast <- function(station, conn = NULL) {
     }
     tbl <- getForecastTable(station)
     writeToDB(tbl, conn)
-
+    
     if (closeConn) {
         dbDisconnect(conn)
     }
@@ -64,13 +64,13 @@ writeForecast <- function(station, conn = NULL) {
 
 getStationName <- function(station) {
     
-conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
-	dbTbl <- dbSendQuery(conn, paste("SELECT description FROM stations WHERE STA = '", station, "'", sep = ""))
+    conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
+    dbTbl <- dbSendQuery(conn, paste("SELECT description FROM stations WHERE STA = '", station, "'", sep = ""))
     
     returnTable <- fetch(dbTbl)
-
+    
     dbDisconnect(conn)    
-
+    
     if (is.null(returnTable[1,1])) {
         return("Station Name Unknown")
     } else {
@@ -79,9 +79,9 @@ conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "f
 }
 
 readForecast <- function(station, startdate, enddate) {    
-
-conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
-
+    
+    conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
+    
     dbTbl <- dbSendQuery(conn, paste("SELECT * FROM forecast WHERE DAT BETWEEN '", as.character(as.POSIXct(startdate) - days(10)), "' AND '", enddate, "' AND STA = '", station, "'", sep = ""))
     
     returnTable <- fetch(dbTbl)
@@ -89,6 +89,6 @@ conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "f
     returnTable$STA <- factor(returnTable$STA)
     
     dbDisconnect(conn)
-
+    
     return(returnTable)
 }
