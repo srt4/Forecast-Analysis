@@ -10,8 +10,9 @@ getForecastTable <- function(station) {
     webpage <- readLines(tc <- textConnection(webpage)); close(tc)
     
     ## Choose only the relevant lines
-    date.text <- webpage[grep("UTC", webpage)]
-    forecast.text <- webpage[grep("FHR|TMP|DPT|WND|P12|Q12|T12", webpage)]
+    date.text <- webpage[grep(" UTC ", webpage)]
+    forecast.text.tmp <- webpage[grep(" FHR | X/N | N/X | TMP | DPT | WND | P12 | Q12 | T12 ", webpage)]
+    forecast.text <- gsub(" N/X | X/N ", " HLT ", forecast.text.tmp)
     
     ## Parse the date
     fixed.date <- strsplit(date.text, split = " ")[[1]]
