@@ -7,7 +7,9 @@ source("Weather.R")
 #conn <- dbConnect(MySQL(), user = "root", password = "toorpassword", dbname = "forecast_analysis", host = "forecast-analysis.cjswh8fnvy2j.us-west-2.rds.amazonaws.com")
 
 getMeasureName <- function(measure) {
-    if (measure == "TMP") {
+    if (measure == "HLT") {
+	return("Temperature (F)")
+    } else if (measure == "TMP") {
         return("Temperature (F)")
     } else if (measure == "DPT") {
         return("Dew Point")
@@ -68,15 +70,15 @@ shinyServer(function(input, output) {
         tbl <- forecastTable()
         
         tbl$VTM <- tbl$DAT + hours(tbl$FHR)
-        if (input$temperature == "High" & input$measure == "TMP") tbl <- subset(tbl, substr(VTM, 12, 16) == "00:00")
-        if (input$temperature == "Low" & input$measure == "TMP") tbl <- subset(tbl, substr(VTM, 12, 16) == "12:00")
+        if (input$temperature == "High" & input$measure %in% c("HLT", "TMP")) tbl <- subset(tbl, substr(VTM, 12, 16) == "00:00")
+        if (input$temperature == "Low" & input$measure %in% c("HLT", "TMP")) tbl <- subset(tbl, substr(VTM, 12, 16) == "12:00")
         
         tbl$DAT_fac <- factor(tbl$DAT)
         
         tbl <- subset(tbl, VTM >= as.POSIXct(input$date_range[1]) & VTM <= as.POSIXct(input$date_range[2]))
         
         if (input$means) {
-            newData <- ddply(tbl, .(VTM), summarise, TMP = mean(TMP, na.rm = TRUE), DPT = mean(DPT, na.rm = TRUE), WND = mean(WND, na.rm = TRUE), P12 = mean(P12, na.rm = TRUE), Q12 = mean(Q12, na.rm = TRUE), T12 = mean(T12, na.rm = TRUE))
+            newData <- ddply(tbl, .(VTM), summarise, HLT = mean(HLT, na.rm = TRUE), TMP = mean(TMP, na.rm = TRUE), DPT = mean(DPT, na.rm = TRUE), WND = mean(WND, na.rm = TRUE), P12 = mean(P12, na.rm = TRUE), Q12 = mean(Q12, na.rm = TRUE), T12 = mean(T12, na.rm = TRUE))
             thisPlot <- ggplot(newData, aes_string(x = "VTM", y = input$measure)) + 
                 geom_line(size = 1.5) +
                 geom_point(size = 3) +

@@ -29,7 +29,7 @@ shinyUI(pageWithSidebar(
         br(),
         
         h4("Forecast"),
-        selectInput("measure", "Choose a Variable:", c("Temperature" = "TMP", "Dew Point" = "DPT", "Wind" = "WND", "Precipitation Chance" = "P12", "Rainfall Amount" = "Q12", "Thunderstorm Chance" = "T12")),
+        selectInput("measure", "Choose a Variable:", c("High/Low Temperature" = "HLT", "Forecast Temperature" = "TMP", "Dew Point" = "DPT", "Wind" = "WND", "Precipitation Chance" = "P12", "Rainfall Amount" = "Q12", "Thunderstorm Chance" = "T12")),
         dateRangeInput("date_range", "Date Range:", start = today(), end = today() + days(7), min = getRecentForecast("min"), max = getRecentForecast("max")),
         
         h4("Stability"),
